@@ -1,80 +1,92 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/script.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
 </head>
 
 <body>
 <div class="container contact-form">
-    <div class="contact-image">
-        <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
+    <div class="alert alert-success" role="alert">
+        <h2 class="alert-heading">Manual</h2>
+        <p>• Click with LMB on card preview in order to save it.</p>
+        <p>• Click Ctrl+V in order to paste the image from clipboard to the card preview (size should be like 563 x
+            352).</p>
     </div>
-    <form method="post">
-        <h3>Card details</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <input type="text" name="txtName" class="form-control" placeholder="Name" value=""/>
-                </div>
+</div>
 
-                <div class="row">
-                    <div class="col">
-
-                        <div class="form-group">
-                            <input type="text" name="txtRed" class="form-control" placeholder="Red" value=""/>
-                        </div>
-                    </div>
-                    <div class="col">
-
-                        <div class="form-group">
-                            <input type="text" name="txtGreen" class="form-control" placeholder="Green" value=""/>
-                        </div>
-                    </div>
-                    <div class="col">
-
-                        <div class="form-group">
-                            <input type="text" name="txtBlue" class="form-control" placeholder="Blue" value=""/>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="form-group">
-                    <input type="text" name="txtMana" class="form-control" placeholder="Energy/mana" value=""/>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="txtPower" class="form-control" placeholder="Power" value=""/>
-                </div>
-                <div class="form-group">
-                    <textarea name="txtMsg" class="form-control" placeholder="Description"
-                              style="width: 100%; height: 150px;"></textarea>
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="btnContact" value="Refresh" onclick="myFunction()"/>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <meta http-equiv="cache-control" content="no-cache">
-                    <img src="{{url_for('static', filename='result.png')}}" width="400" height="535"
-                         id="main-image"/>
-                    </meta>
-                </div>
+<div class="container contact-form">
+    <div class="col-md-6">
+        <h3>Card background color</h3>
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" id="txtRed" class="form-control" placeholder="Red" value=""/>
             </div>
         </div>
-    </form>
-</div>
-<script>
-    function myFunction() {
-        location.reload(true);
-        var d = new Date();
-        var c = "http://localhost:5000/static/result.png" + "?t=" + d.getTime();
-        console.log("ASD");
-        document.getElementById("main-image").src = c;
-    }
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" id="txtGreen" class="form-control" placeholder="Green" value=""/>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="text" id="txtBlue" class="form-control" placeholder="Blue" value=""/>
+            </div>
+        </div>
 
-</script>
+        <h3>Card details</h3>
+        <div class="form-group">
+            <input type="text" id="txtName" class="form-control" placeholder="Name" value=""/>
+        </div>
+
+        <div class="form-group">
+            <input type="text" id="txtManaNeutral" class="form-control" placeholder="Mana cost neutral" value=""/>
+        </div>
+        <div class="form-group">
+            <input type="text" id="txtManaClass" class="form-control" placeholder="Mana cost class-specific"
+                   value=""/>
+        </div>
+        <div class="form-group">
+            <input type="text" id="txtPower" class="form-control" placeholder="Power" value=""/>
+        </div>
+        <div class="form-group">
+                <textarea id="txtMsg" class="form-control" placeholder="Description"
+                          style="width: 100%; height: 150px;"></textarea>
+        </div>
+        <div class="form-group">
+            <input type="button" class="btnContact" value="Refresh" onclick="refreshBtnOnClick()"/>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <canvas id="main-canvas"/>
+        </div>
+    </div>
+</div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        redrawCard();
+    });
+    window.addEventListener("paste", function (e) {
+        retrieveImageFromClipboardAsBlob(e, function (imageBlob) {
+            if (imageBlob) {
+                handlePasteEvent(imageBlob);
+            }
+        });
+    }, false);
+
+    document.getElementById("main-canvas").addEventListener('click', function (e) {
+        var link = document.createElement('a');
+        link.download = 'card.png';
+        link.href = document.getElementById("main-canvas").toDataURL();
+        link.click();
+        link.delete;
+    });
+</script>
+
 </html>
