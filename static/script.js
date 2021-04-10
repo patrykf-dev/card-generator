@@ -57,7 +57,7 @@ function redrawCard() {
 
         var originalLines = description.split('\n');
 
-        var lineY = 528;
+        var lineY = 492;
         for (var j = 0; j < originalLines.length; j++) {
             var lines = wordWrap(originalLines[j], 50).split('\n');
             for (var i = 0; i < lines.length; i++) {
